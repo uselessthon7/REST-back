@@ -11,7 +11,7 @@ const upload = multer({
 });
 const router = express.Router();
 const mysql      = require('mysql');
-const dbconfig   = require('./config/database.js');
+const dbconfig   = require('../config/database.js');
 const connection = mysql.createConnection(dbconfig);
 connection.connect();
 
@@ -23,13 +23,20 @@ router.post('/', upload.single('userfile'), function (req, res, next) {
     //console.log(req.body.category[0]);
     // res.send(req.file);
 
-    const SQL = `INSERT INTO description(title, description, url) VALUES(${req.body.title}, ${req.body.desc}, ${req.file.path}) returning seq`;
+    const SQL = `INSERT INTO description(title, description, url) VALUES('\''${req.body.title}'\'', '\''${req.body.desc}'\'', '\''${req.file.path}'\'')`;
     connection.query(SQL, function(err, rows) {
         if(err) throw err;
 
-        console.log(rows);
+        console.log(rows.insertId);
 
-        res.status(200);
+	let list = req.body.category;
+	for(let i = 0; i < list.length; i++) {
+	  
+	  connection.query(`INSERT INTO category_has_description VALUES(?, ?)`, [list[i], rows.insertId], function(err, rows) {
+		  if(err) throw err;
+	  });
+	}
+	    res.send('100');
     });
 });
 
