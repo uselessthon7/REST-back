@@ -40,7 +40,8 @@ router.post('/', upload.single('userfile'), function (req, res, next) {
             )));
         }
         Promise.all(promises).then(() => {
-            console.log('ok');res.status(200);
+            console.log('ok');
+            res.status(200).end();
         });
     })
 });
