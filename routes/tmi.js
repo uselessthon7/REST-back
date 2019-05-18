@@ -9,13 +9,14 @@ const upload = multer({
     }),
     limits: {fileSize: 5 * 1024 * 1024}
 });
+
 const router = express.Router();
 const mysql = require('mysql');
 const dbconfig = require('../config/database.js');
 const connection = mysql.createConnection(dbconfig);
 connection.connect();
 
-router.get('/', function (req, res, next) {
+router.get('/test', function (req, res, next) {
     res.render('fileupload');
 });
 
@@ -34,12 +35,11 @@ router.post('/', upload.single('userfile'), function (req, res, next) {
     });
 });
 
-router.get('/:q', function(req, res, next) {
-    let list = req.params.q.slice(2);
-    const SQL = 'SELECT * FROM description WHERE seq IN (SELECT d_seq FROM category_has_description WHERE c_seq IN (?))';
+router.get('/', function(req, res, next) {
+    let list = req.query.q;
+    const SQL = 'SELECT * FROM description WHERE seq IN (SELECT d_seq FROM category_has_description WHERE c_seq IN (?)) ORDER BY rand() LIMIT 10';
     connection.query(SQL, [list], function (err, rows) {
         if(err)  throw err;
-
         res.json(rows);
     });
 });
