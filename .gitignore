@@ -1,3 +1,8 @@
 
 .idea/
 node_modules/
+config/gcp_storage.yml
+config/gcp_storage_keyfile.json
+views/
+.DS_Store
+uploads/
