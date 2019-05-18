@@ -29,18 +29,15 @@ router.post('/', upload.single('userfile'), function (req, res, next) {
         let list = req.body.category;
         let values = [];
         for(let i = 0; i < list.length; i++) {
-            console.log(list[i], rows.insertId);
             values.push([list[i], rows.insertId]);
             promises.push(new Promise((resolve) => (
                 connection.query(`INSERT INTO category_has_description VALUES ?`, [values], function (err, rows) {
-                    console.log('resolve' + rows.insertId);
                     if (err) throw err;
                     resolve();
                 })
             )));
         }
         Promise.all(promises).then(() => {
-            console.log('ok');
             res.status(200).end();
         });
     })
