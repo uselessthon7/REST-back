@@ -22,6 +22,7 @@ router.get('/test', function (req, res, next) {
 
 router.post('/', upload.single('userfile'), function (req, res, next) {
     const SQL = `INSERT INTO description(title, description, url) VALUES('\''${req.body.title}'\'', '\''${req.body.desc}'\'', '\''${req.file.path}'\'')`;
+    const promises = [];
     connection.query(SQL, function (err, rows) {
         if (err) throw err;
 
@@ -29,12 +30,15 @@ router.post('/', upload.single('userfile'), function (req, res, next) {
         let values = [];
         for(let i = 0; i < list.length; i++) {
             values.push([list[i], rows.insertId]);
+            promises.push(new Promise((resolve) => (
+                connection.query(`INSERT INTO category_has_description VALUES ?`, [values], function (err, rows) {
+                    if (err) throw err;
+                    resolve();
+                })
+            )));
         }
-        connection.query(`INSERT INTO category_has_description VALUES ?`, [values], function (err, rows) {
-            if (err) throw err;
-            res.status(200);
-        });
-    });
+        Promise.all(promises).then(() => res.status(200));
+    })
 });
 
 
