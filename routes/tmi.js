@@ -33,7 +33,7 @@ router.post('/', upload.single('userfile'), function (req, res, next) {
             values.push([list[i], rows.insertId]);
             promises.push(new Promise((resolve) => (
                 connection.query(`INSERT INTO category_has_description VALUES ?`, [values], function (err, rows) {
-                    print('resolve' + rows.insertId);
+                    console.log('resolve' + rows.insertId);
                     if (err) throw err;
                     resolve();
                 })
