@@ -3,6 +3,7 @@
 node_modules/
 config/gcp_storage.yml
 config/gcp_storage_keyfile.json
+config/database.js
 views/
 .DS_Store
 uploads/
